@@ -1,25 +1,26 @@
-import { Request, Response, NextFunction } from 'express';
-import { user } from '../entities/user';
-import * as admin from 'firebase-admin';
+import type { Request, Response, NextFunction } from 'express';
+import { admin } from '../config/firebaseConfig';
 
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-});
+const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const token = req.headers.authorization?.split('Bearer ')[1];
 
-export function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers['authorization'];
   if (!token) {
-    return res.status(401).json({ error: 'Unauthorized: Token missing' });
+    res.status(401).json({ message: 'No token provided.' });
+    return;
   }
 
-  // Verify the token with Firebase Auth
-  admin.auth().verifyIdToken(token)
-    .then((decodedToken) => {
-      req.user = decodedToken;
-      next();
-    })
-    .catch((error) => {
-      return res.status(401).json({ error: 'Unauthorized: Invalid token' });
-    });
-}
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    res.status(403).json({ message: 'Invalid token.' });
+    return;
+  }
+};
+
+export default authMiddleware;

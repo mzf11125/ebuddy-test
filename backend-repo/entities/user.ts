@@ -1,10 +1,8 @@
-export interface user{
-    id: number;
-    name: string;
-    email: string;
-    password: string;
-    role: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
+interface User {
+  uid: string;
+  name: string;
+  email: string;
+  // any other fields
 }
+
+export default User;
