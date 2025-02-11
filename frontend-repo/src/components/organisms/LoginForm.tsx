@@ -1,6 +1,8 @@
+// language: tsx
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { loginWithEmailPassword } from "../../apis/firebase";
 import { useAppDispatch } from "../../store/store";
@@ -11,6 +13,7 @@ export const LoginForm = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +22,8 @@ export const LoginForm = () => {
 
     try {
       await loginWithEmailPassword(email, password);
-      // Redirect or update state here
+      // Once logged in, redirect to a dashboard (or any main page)
+      router.push("/dashboard");
     } catch (err) {
       setError("Failed to login. Please check your credentials.");
     } finally {
@@ -28,11 +32,7 @@ export const LoginForm = () => {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ maxWidth: 400, mx: "auto", mt: 4 }}
-    >
+    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: "auto", mt: 4 }}>
       <TextField
         label="Email"
         type="email"
@@ -56,13 +56,7 @@ export const LoginForm = () => {
           {error}
         </Typography>
       )}
-      <Button
-        type="submit"
-        fullWidth
-        variant="contained"
-        sx={{ mt: 3 }}
-        disabled={loading}
-      >
+      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }} disabled={loading}>
         {loading ? "Loading..." : "Login"}
       </Button>
     </Box>
