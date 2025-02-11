@@ -1,34 +1,38 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Box, TextField, Button, Typography } from '@mui/material';
-import { loginWithEmailPassword } from '../../apis/firebase';
-import { useAppDispatch } from '../../store/store';
+import { useState } from "react";
+import { Box, TextField, Button, Typography } from "@mui/material";
+import { loginWithEmailPassword } from "../../apis/firebase";
+import { useAppDispatch } from "../../store/store";
 
 export const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
       await loginWithEmailPassword(email, password);
       // Redirect or update state here
     } catch (err) {
-      setError('Failed to login. Please check your credentials.');
+      setError("Failed to login. Please check your credentials.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ maxWidth: 400, mx: "auto", mt: 4 }}
+    >
       <TextField
         label="Email"
         type="email"
@@ -59,7 +63,7 @@ export const LoginForm = () => {
         sx={{ mt: 3 }}
         disabled={loading}
       >
-        {loading ? 'Loading...' : 'Login'}
+        {loading ? "Loading..." : "Login"}
       </Button>
     </Box>
   );
